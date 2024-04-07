@@ -1,1 +1,4 @@
-## laravel 11 and react 18 with Tailwindcss
+# Laravel 11 And React 18 With Tailwindcss Project
+
+### - Authentication
+### - Users CRUD
