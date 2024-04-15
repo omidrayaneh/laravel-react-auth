@@ -3,9 +3,12 @@ import axiosClient from "../axios-client";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ThreeDots } from "react-loader-spinner";
+import PaginationLinks from "../components/PaginationLinks";
+import {  PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const [meta, setMeta] = useState({});
   const [loading, setLoading] = useState(false);
 
   const Toast = Swal.mixin({
@@ -19,7 +22,9 @@ const Users = () => {
       toast.onmouseleave = Swal.resumeTimer;
     },
   });
-
+  const onPageClick = (link)=>{
+    getUsers(link.url);
+  }
   useEffect(() => {
     getUsers();
   }, []);
@@ -47,16 +52,17 @@ const Users = () => {
     });
   };
 
-  const getUsers = () => {
+  const getUsers = (url) => {
+    url = url || '/users'
     setLoading(true);
     axiosClient
-      .get("/users")
+      .get(url)
       .then(({ data }) => {
-        setLoading(false);
-
-        const response = data.response;
+        
         setUsers(data.data);
-        console.log(data);
+        setMeta(data.meta);
+        setLoading(false);
+       
       })
       .catch(() => {
         setLoading(false);
@@ -131,13 +137,13 @@ const Users = () => {
                     to={"/users/" + user.id}
                     className="mr-2 font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
-                    Edit
+                     <PencilIcon className="w-4 h-4 mb-[-16px] ml-[-7px]" />
                   </Link>
                   <button
                     onClick={(e) => deleteHandler(user)}
                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
-                    Delete
+                     <TrashIcon className="w-4 h-4 text-rose-950" />
                   </button>
                 </td>
               </tr>
@@ -146,6 +152,9 @@ const Users = () => {
           )}
         
         </table>
+        <div className="">
+          <PaginationLinks meta={meta}  onPageClick={onPageClick}/>
+        </div>
       </div>
     </div>
   );
